@@ -131,12 +131,12 @@ RCT_EXPORT_MODULE()
 - (void)stopObserving
 {
     _hasListeners = FALSE;
-    
+
     // Fix for https://github.com/react-native-webrtc/react-native-callkeep/issues/406
     // We use Objective-C Key Value Coding(KVC) to sync _RTCEventEmitter_ `_listenerCount`.
     @try {
         [self setValue:@0 forKey:@"_listenerCount"];
-    } 
+    }
     @catch ( NSException *e ){
         NSLog(@"[RNCallKeep][stopObserving] exception: %@",e);
         NSLog(@"[RNCallKeep][stopObserving] RNCallKeep parent class RTCEventEmitter might have a broken state.");
@@ -558,7 +558,7 @@ RCT_EXPORT_METHOD(getAudioRoutes: (RCTPromiseResolveBlock)resolve
 {
     NSMutableArray *newInputs = [NSMutableArray new];
     NSString * selected = [RNCallKeep getSelectedAudioRoute];
-    
+
     NSMutableDictionary *speakerDict = [[NSMutableDictionary alloc]init];
     [speakerDict setObject:@"Speaker" forKey:@"name"];
     [speakerDict setObject:AVAudioSessionPortBuiltInSpeaker forKey:@"type"];
@@ -649,13 +649,13 @@ RCT_EXPORT_METHOD(getAudioRoutes: (RCTPromiseResolveBlock)resolve
     AVAudioSession* myAudioSession = [AVAudioSession sharedInstance];
     AVAudioSessionRouteDescription *currentRoute = [myAudioSession currentRoute];
     NSArray *selectedOutputs = currentRoute.outputs;
-    
+
     AVAudioSessionPortDescription *selectedOutput = selectedOutputs[0];
-    
+
     if(selectedOutput && [selectedOutput.portType isEqualToString:AVAudioSessionPortBuiltInReceiver]) {
         return @"Phone";
     }
-    
+
     return [RNCallKeep getAudioInputType: selectedOutput.portType];
 }
 
@@ -913,7 +913,7 @@ RCT_EXPORT_METHOD(getAudioRoutes: (RCTPromiseResolveBlock)resolve
 
     NSUInteger categoryOptions = AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP;
     NSString *mode = AVAudioSessionModeDefault;
-    
+
     NSDictionary *settings = [RNCallKeep getSettings];
     if (settings && settings[@"audioSession"]) {
         if (settings[@"audioSession"][@"categoryOptions"]) {
@@ -924,11 +924,9 @@ RCT_EXPORT_METHOD(getAudioRoutes: (RCTPromiseResolveBlock)resolve
             mode = settings[@"audioSession"][@"mode"];
         }
     }
-    
-    AVAudioSession* audioSession = [AVAudioSession sharedInstance];
-    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:categoryOptions error:nil];
 
-    [audioSession setMode:mode error:nil];
+    AVAudioSession* audioSession = [AVAudioSession sharedInstance];
+    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord mode:mode options:categoryOptions error:nil];
 
     double sampleRate = 44100.0;
     [audioSession setPreferredSampleRate:sampleRate error:nil];

@@ -189,11 +189,16 @@ RCT_EXPORT_MODULE()
 }
 
 + (NSString *) getAudioOutput {
-    // system can alter outputs from another thread, copy before access to avoid crash:
-    // *** -[__NSArray0 objectAtIndex:]: index 0 beyond bounds for empty array
-    NSArray<AVAudioSessionPortDescription *> *outputs = [[AVAudioSession sharedInstance].currentRoute.outputs copy];
-    AVAudioSessionPortDescription *firstOutput = [outputs firstObject];
-    return firstOutput != nil ? firstOutput.portType : nil;
+    @try{
+        NSArray<AVAudioSessionPortDescription *>* outputs = [AVAudioSession sharedInstance].currentRoute.outputs;
+        if(outputs != nil && outputs.count > 0){
+            return outputs[0].portType;
+        }
+    } @catch(NSException* error) {
+        NSLog(@"getAudioOutput error :%@", [error description]);
+    }
+
+    return nil;
 }
 
 + (void)setup:(NSDictionary *)options {

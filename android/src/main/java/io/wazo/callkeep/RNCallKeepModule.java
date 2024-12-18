@@ -828,27 +828,34 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule implements Life
             if (conn == null) {
                 return;
             }
+
+            boolean isMuted = conn.getCallAudioState().isMuted();
+            int newRoute;
+
             if(audioRoute.equals("Bluetooth")) {
                 Log.d(TAG,"[RNCallKeepModule] setting audio route: Bluetooth");
-                conn.setAudioRoute(CallAudioState.ROUTE_BLUETOOTH);
-                promise.resolve(true);
-                return;
+                newRoute = CallAudioState.ROUTE_BLUETOOTH;
             }
-            if(audioRoute.equals("Headset")) {
-                Log.d(TAG,"[RNCallKeepModule] setting audio route: Headset");
-                conn.setAudioRoute(CallAudioState.ROUTE_WIRED_HEADSET);
-                promise.resolve(true);
-                return;
+            else if(audioRoute.equals("Headset")) {
+                Log.d(TAG,"[RNCallKeepModule] setting audio route: Headset"); 
+                newRoute = CallAudioState.ROUTE_WIRED_HEADSET;
             }
-            if(audioRoute.equals("Speaker")) {
+            else if(audioRoute.equals("Speaker")) {
                 Log.d(TAG,"[RNCallKeepModule] setting audio route: Speaker");
-                conn.setAudioRoute(CallAudioState.ROUTE_SPEAKER);
-                promise.resolve(true);
-                return;
+                newRoute = CallAudioState.ROUTE_SPEAKER;
             }
-            Log.d(TAG,"[RNCallKeepModule] setting audio route: Wired/Earpiece");
-            conn.setAudioRoute(CallAudioState.ROUTE_WIRED_OR_EARPIECE);
+            else {
+                Log.d(TAG,"[RNCallKeepModule] setting audio route: Wired/Earpiece");
+                newRoute = CallAudioState.ROUTE_WIRED_OR_EARPIECE;
+            }
+
+            // Create new audio state preserving mute state
+            CallAudioState newAudioState = new CallAudioState(isMuted, newRoute, 
+                conn.getCallAudioState().getSupportedRouteMask());
+            
+            conn.onCallAudioStateChanged(newAudioState);
             promise.resolve(true);
+
         } catch (Exception e) {
             promise.reject("SetAudioRoute", e.getMessage());
         }

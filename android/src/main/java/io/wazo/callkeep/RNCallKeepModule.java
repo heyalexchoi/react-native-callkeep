@@ -830,6 +830,7 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule implements Life
             }
 
             boolean isMuted = conn.getCallAudioState().isMuted();
+            Log.d(TAG, "[RNCallKeepModule] setAudioRoute, uuid: " + uuid + ", audioRoute: " + audioRoute + ", isMuted: " + isMuted);
             int newRoute;
 
             if(audioRoute.equals("Bluetooth")) {

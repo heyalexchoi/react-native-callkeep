@@ -800,6 +800,9 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule implements Life
                     conn.getCallAudioState().getSupportedRouteMask());
         }
         conn.onCallAudioStateChanged(newAudioState);
+        
+        Log.d(TAG, "[RNCallKeepModule] setMutedCall - After change:" +
+            "\n  New mute state: " + conn.getCallAudioState().isMuted());
     }
     /**
      * toggle audio route for speaker via connection service function
@@ -830,7 +833,13 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule implements Life
             }
 
             boolean isMuted = conn.getCallAudioState().isMuted();
-            Log.d(TAG, "[RNCallKeepModule] setAudioRoute, uuid: " + uuid + ", audioRoute: " + audioRoute + ", isMuted: " + isMuted);
+            Log.d(TAG, "[RNCallKeepModule] setAudioRoute - " +
+                "\n  Audio Route Requested: " + audioRoute +
+                "\n  Current audio state:" +
+                "\n  Muted: " + isMuted +
+                "\n  Route: " + conn.getCallAudioState().getRoute() +
+                "\n  Supported Routes: " + conn.getCallAudioState().getSupportedRouteMask());
+
             int newRoute;
 
             if(audioRoute.equals("Bluetooth")) {

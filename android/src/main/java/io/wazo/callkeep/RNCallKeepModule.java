@@ -802,7 +802,7 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule implements Life
         conn.onCallAudioStateChanged(newAudioState);
         
         Log.d(TAG, "[RNCallKeepModule] setMutedCall - After change:" +
-            "\n  New mute state: " + conn.getCallAudioState().isMuted());
+            "\n  New mute state: " + conn.isMuted());
     }
     /**
      * toggle audio route for speaker via connection service function
@@ -832,7 +832,8 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule implements Life
                 return;
             }
 
-            boolean isMuted = conn.getCallAudioState().isMuted();
+            boolean isMuted = conn.isMuted();
+
             Log.d(TAG, "[RNCallKeepModule] setAudioRoute - " +
                 "\n  Audio Route Requested: " + audioRoute +
                 "\n  Current audio state:" +
@@ -860,10 +861,14 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule implements Life
             }
 
             // Create new audio state preserving mute state
-            CallAudioState newAudioState = new CallAudioState(isMuted, newRoute, 
-                conn.getCallAudioState().getSupportedRouteMask());
+            // CallAudioState newAudioState = new CallAudioState(isMuted, newRoute, 
+            //     conn.getCallAudioState().getSupportedRouteMask());
             
-            conn.onCallAudioStateChanged(newAudioState);
+            // conn.onCallAudioStateChanged(newAudioState);
+
+            conn.setAudioRoute(newRoute);
+            setMutedCall(uuid, isMuted);
+            
             promise.resolve(true);
 
         } catch (Exception e) {

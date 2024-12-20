@@ -142,6 +142,10 @@ public class VoiceConnection extends Connection {
         destroy();
     }
 
+    public boolean isMuted() {
+        return isMuted;
+    }
+
     public void reportDisconnect(int reason) {
         super.onDisconnect();
         switch (reason) {
